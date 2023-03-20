@@ -1,0 +1,72 @@
+<div>
+  <div>
+    <h1>
+      List of all photos
+    </h1>
+  </div>
+</div>
+
+<div>
+  <div>
+    <table border="1">
+      <tr>
+        <th>
+          Image
+        </th>
+
+        <th>
+          Caption
+        </th>
+
+        <th>
+          Owner
+        </th>
+
+        <th>
+          Posted
+        </th>
+        <th>
+          Likes
+        </th>
+
+        <th>
+        </th>
+      </tr>
+
+      <% @list_of_photos.each do |a_photo| %>
+      <tr>
+        <td>
+          <img src="<%= a_photo.image %>" />
+        </td>
+        <td>
+          <%= a_photo.caption %>
+        </td>
+        <td>
+          <% owner = User.find(a_photo.owner_id) %>
+          <%= owner.username %>
+        </td>
+         <td>
+          <%= time_ago_in_words(a_photo.created_at) %> ago
+        </td>
+        <td>
+          <%= a_photo.likes_count %>
+        </td>
+       
+        <td>
+          <% if @current_user == nil %>
+          <a href="/user_sign_in">
+            Show details
+          </a>
+          <% else %>
+            <a href="/photos/<%= a_photo.id %>">
+            Show details
+          </a>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<hr>
