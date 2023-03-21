@@ -1,4 +1,20 @@
 class FollowRequestsController < ApplicationController
+  def user_index
+    matching_users = User.all
+    @list_of_users = matching_users.order(:username)
+    render({ :template => "users/index.html.erb" })
+  end
+  
+  def user_show
+    the_id = params.fetch("path_id")
+  
+    matching_users = User.where({ :username => the_id })
+  
+    @the_user = matching_users.at(0)
+  
+    render({ :template => "users/show.html.erb" })
+  end
+  
   def index
     matching_follow_requests = FollowRequest.all
 
@@ -24,9 +40,9 @@ class FollowRequestsController < ApplicationController
 
     if the_follow_request.valid?
       the_follow_request.save
-      redirect_to("/follow_requests", { :notice => "Follow request created successfully." })
+      redirect_to("/", { :notice => "Follow request created successfully." })
     else
-      redirect_to("/follow_requests", { :alert => the_follow_request.errors.full_messages.to_sentence })
+      redirect_to("/", { :alert => the_follow_request.errors.full_messages.to_sentence })
     end
   end
 

@@ -45,7 +45,13 @@
 <div>
   <div>
     <h2>
-      Own photos (<%= @the_user.own_photos.count%>)
+      <% total_photos_count = 0 %>
+      <% @the_user.following.each do |a_user| %>
+        <% a_user.own_photos.each do |a_photo| %>
+          <% total_photos_count += 1 %> 
+        <% end %>
+      <% end %>
+      Feed (<%= total_photos_count %>)
     </h2>
   </div>
 </div>
@@ -59,11 +65,11 @@
         </th>
 
         <th>
-          Caption
+          Owner
         </th>
 
         <th>
-          Owner
+          Caption
         </th>
 
         <th>
@@ -77,38 +83,38 @@
         </th>
       </tr>
 
-      <% @the_user.own_photos.each do |a_photo| %>
-      <tr>
-        <td>
-          <img src="<%= a_photo.image %>" />
-        </td>
-        <td>
-          <%= a_photo.caption %>
-        <. /td>
-        <td>
-          <% owner = User.find(a_photo.owner_id) %>
-          <%= owner.username %>
-        </td>
-         <td>
-          <%= time_ago_in_words(a_photo.created_at) %> ago
-        </td>
-        <td>
-          <%= a_photo.likes_count %>
-        </td>
-       
-        <td>
-          <% if @current_user == nil %>
-          <a href="/user_sign_in">
-            Show details
-          </a>
-          <% else %>
-            <a href="/photos/<%= a_photo.id %>">
-            Show details
-          </a>
-          <% end %>
-        </td>
-      </tr>
+      <% @the_user.following.each do |a_user| %>
+      <% a_user.own_photos.each do |a_photo| %>
+        <tr>
+          <td>
+            <img src="<%= a_photo.image %>" />
+          </td>
+          <td>
+            <% owner = User.find(a_photo.owner_id) %>
+            <%= owner.username %>
+          </td>
+          <td>
+            <%= a_photo.caption %>
+          <td>
+            <%= time_ago_in_words(a_photo.created_at) %> ago
+          </td>
+          <td>
+            <%= a_photo.likes_count %>
+          </td>
+        
+          <td>
+            <% if @current_user == nil %>
+            <a href="/user_sign_in">
+              Show details
+            </a>
+            <% else %>
+              <a href="/photos/<%= a_photo.id %>">
+              Show details
+            </a>
+            <% end %>
+          </td>
+        </tr>
       <% end %>
+    <% end %>
     </table>
   </div>
-</div>

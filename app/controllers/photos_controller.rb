@@ -1,4 +1,13 @@
 class PhotosController < ApplicationController
+  def feed
+    the_id = params.fetch("path_id")
+  
+    matching_users = User.where({ :username => the_id })
+  
+    @the_user = matching_users.at(0)
+
+    render({ :template => "photos/feed.html.erb" })
+  end
   def index
     matching_photos = Photo.all
 

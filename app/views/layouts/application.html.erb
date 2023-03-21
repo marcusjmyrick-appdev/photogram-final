@@ -40,7 +40,11 @@
           </a>
         </li>
         <% else %>
-          
+          <li>
+            <a href="/edit_user_profile">
+              <%= @current_user.username %>
+            </a>
+          </li>
           <li>
             <a href="/user_sign_out">
               Sign out
@@ -48,6 +52,8 @@
           </li>
         <% end %>
     </ul>
+    <p> <%= notice %> </p>
+    <p> <%= alert %> </p>
     <%= yield %>
   </body>
 </html>

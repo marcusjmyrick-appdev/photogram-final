@@ -15,5 +15,7 @@ class ApplicationController < ActionController::Base
       redirect_to("/user_sign_in", { :notice => "You have to sign in first." })
     end
   end
-
+  def follow_status(sender_id, recipient_id)
+    FollowRequest.find_by(sender_id: sender_id, recipient_id: recipient_id)
+  end  
 end

@@ -73,6 +73,8 @@ Rails.application.routes.draw do
   # DELETE
   get("/delete_photo/:path_id", { :controller => "photos", :action => "destroy" })
 
+  get("/users/:path_id/feed", { :controller => "photos", :action => "feed"})
+
   #------------------------------
 
   # Routes for the User account:
@@ -103,7 +105,11 @@ Rails.application.routes.draw do
   #------------------------------
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  
 
-  get("/users", { :controller => "user", :action => "index"})
-  get("/", { :controller => "user", :action => "index"})
+  # Route for Users group
+
+  get("/users", { :controller => "follow_requests", :action => "user_index"})
+  get("/users/:path_id", { :controller => "follow_requests", :action => "user_show"})
+  get("/", { :controller => "follow_requests", :action => "user_index"})
 end
