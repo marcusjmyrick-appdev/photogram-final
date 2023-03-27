@@ -10,13 +10,23 @@
   <dd>
     <%= @the_user.followers.count %>
       <div>
-          <form action="/insert_follow_request" method="post">
-            <input type="hidden" name="query_recipient_id" value="<%= @the_user.id %>">
-
-            <button>
-              Follow
-            </button>
-          </form>
+          <% if @current_user %>
+          <% follow_request =  FollowRequest.find_by(sender_id: @current_user.id, recipient_id: @the_user.id ) %>
+          <% if follow_request.nil? %>
+            <form action="/insert_follow_request" method="post">
+              <input type="hidden" name="query_recipient_id" value="<%= @the_user.id %>">
+              <input type="hidden" name="query_sender_id" value="<%= @current_user.id %>">
+              <input type="hidden" name="query_status_id" value="pending">
+              <button>
+                Follow
+              </button>
+            </form>
+          <% elsif @the_user.private %>
+            <span>Request sent. <a href="/delete_follow_request/<%= follow_request.id %>">Cancel</a></span>
+          <% else %>
+            <a href="/delete_follow_request/<%= follow_request.id %>">Unfollow</a>
+          <% end %>
+        <% end %>
     </div>
 
   </dd>
@@ -57,15 +67,12 @@
         <th>
           Image
         </th>
-
+          <th>
+          Owner
+        </th>
         <th>
           Caption
         </th>
-
-        <th>
-          Owner
-        </th>
-
         <th>
           Posted
         </th>
@@ -82,12 +89,12 @@
         <td>
           <img src="<%= a_photo.image %>" />
         </td>
-        <td>
-          <%= a_photo.caption %>
-        <. /td>
-        <td>
+         <td>
           <% owner = User.find(a_photo.owner_id) %>
           <%= owner.username %>
+        </td>
+        <td>
+          <%= a_photo.caption %>
         </td>
          <td>
           <%= time_ago_in_words(a_photo.created_at) %> ago

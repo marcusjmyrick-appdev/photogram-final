@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   get("/delete_photo/:path_id", { :controller => "photos", :action => "destroy" })
 
   get("/users/:path_id/feed", { :controller => "photos", :action => "feed"})
+  get("/users/:path_id/discover", { :controller => "photos", :action => "discover"})
 
   #------------------------------
 
