@@ -1,62 +1,60 @@
 
-<h1> <%= @the_user.username %></h1>
-
-<dl>
-  <dt>Private</dt>
-  <dd> 
-    <%= @the_user.private %>
-  </dd>
-
-  <dt>Followers</dt>
-  <dd>
-    <%= @the_user.followers.count %>
-  </dd>
-
-  <dt>Following</dt>
-  <dd><%= @the_user.following.count %></dd>
-</dl>
-
-<nav>
-  <ul>
-    <li>
-      <a href="/users/<%= @the_user.username %>">Profile</a>
-    </li>
-    <li>
-      <a href="/users/<%= @the_user.username %>/liked_photos">Liked photos</a>
-    </li>
-    <li>
-      <a href="/users/<%= @the_user.username %>/feed">Feed</a>
-    </li>
-    <li>
-      <a href="/users/<%= @the_user.username %>/discover">Discover</a>
-    </li>
-  </ul>
-</nav>
 
 <div>
-  <div>
-    <h2>
-      <% total_photos_count = 0 %>
-      <% @the_user.following.each do |a_user| %>
-        <% a_user.own_photos.each do |a_photo| %>
-          <% total_photos_count += 1 %> 
-        <% end %>
-      <% end %>
-      Feed (<%= total_photos_count %>)
-    </h2>
+  <h1>
+    <%= @current_user.username %>
+  </h1>
+
+  <dl>
+    <dt>
+      Private
+    </dt>
+    <dd>
+      <%= @current_user.private %>
+    </dd>
+
+    <dt>
+      Followers
+    </dt>
+    <dd>
+      <%= @current_user.receivedfollowrequests.count %>
+    </dd>
+
+    <dt>
+      Following
+    </dt>
+    <dd>
+      <%= @current_user.sentfollowrequests.count %>
+    </dd>
+
+    <nav>
+      <ul>
+        <li>
+          <a href="/users/<%= @current_user.username %>">Profile</a>
+        </li>
+        <li>
+          <a href="/users/<%= @current_user.username %>/liked_photos">Liked photos</a>
+        </li>
+        <li>
+          <a href="/users/<%= @current_user.username %>/feed">Feed</a>
+        </li>
+        <li>
+          <a href="/users/<%= @current_user.username %>/discover">Discover</a>
+        </li>
+      </ul>
+    </nav>
+
   </div>
-</div>
 
-<div>
+  <h2>Feed (<%= @current_user.sentfollowrequests.where({ :status => "accepted"}).count %>) 
+
+  </h2>
   <div>
     <table border="1">
       <tr>
-        <th>
-          Image
-        </th>
 
         <th>
-          Owner
+          Image
         </th>
 
         <th>
@@ -64,8 +62,13 @@
         </th>
 
         <th>
+          Owner
+        </th>
+
+        <th>
           Posted
         </th>
+
         <th>
           Likes
         </th>
@@ -73,38 +76,46 @@
         <th>
         </th>
       </tr>
-      <% @followed_users.each do |a_user| %>
-  <% a_user.own_photos.each do |a_photo| %>
-    <tr>
-      <td>
-        <img src="<%= a_photo.image %>" />
-      </td>
-      <td>
-        <% owner = User.find(a_photo.owner_id) %>
-        <%= owner.username %>
-      </td>
-      <td>
-        <%= a_photo.caption %>
-      <td>
-        <%= time_ago_in_words(a_photo.created_at) %> ago
-      </td>
-      <td>
-        <%= a_photo.likes_count %>
-      </td>
-    
-      <td>
-        <% if @current_user == nil %>
-        <a href="/user_sign_in">
-          Show details
-        </a>
-        <% else %>
-          <a href="/photos/<%= a_photo.id %>">
-          Show details
-        </a>
-        <% end %>
-      </td>
-    </tr>
-  <% end %>
-<% end %>
+
+      <%# array of follow requests %>
+      <% accepted_follows = @current_user.sentfollowrequests.where({ :status => "accepted"}) %>
+      <% accepted_follows.each do |f| %>
+        <% f.following_photos.each do |p| %>
+          <tr>
+            <td>
+              <img src="<%= p.image %>" class="img-responsive">
+            </td>
+
+            <td>
+              <%= p.caption  %>
+            </td>
+
+            <td>
+              <%= p.owner.username  %>
+            </td>
+
+            <td>
+              <%=  %>
+            </td>
+            <td>
+              <%=  %>
+            </td>
+
+            <% if @current_user != nil %>
+              <td>
+                <a href="/photos/<%=  %>">
+                  Show details
+                </a>
+              </td>
+            <% else %>
+              <td>
+                <a href="/user_sign_in">
+                  Show details
+                </a>
+              </td>
+            <% end %>
+          <% end %>
+        </tr>
+      <% end %>
     </table>
   </div>

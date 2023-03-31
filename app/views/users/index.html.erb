@@ -28,22 +28,30 @@
       </td>
 
       <td>
-        <% if @current_user %>
+        <% if @current_user != nil %>
           <% follow_request =  FollowRequest.find_by(sender_id: @current_user.id, recipient_id: a_user.id ) %>
-          <% if follow_request.nil? %>
+          
+          <% if follow_request == nil %>
             <form action="/insert_follow_request" method="post">
               <input type="hidden" name="query_recipient_id" value="<%= a_user.id %>">
-              <input type="hidden" name="query_sender_id" value="<%= @current_user.id %>">
-              <input type="hidden" name="query_status_id" value="pending">
               <button>
                 Follow
               </button>
             </form>
-          <% elsif a_user.private %>
-            <span>Request sent. <a href="/delete_follow_request/<%= follow_request.id %>">Cancel</a></span>
+          
+           <% elsif follow_request.status == "pending" %>
+              Request sent.
+              <a href="/delete_follow_request/<%= %>">
+                Cancel
+              </a>
           <% else %>
-            <a href="/delete_follow_request/<%= follow_request.id %>">Unfollow</a>
+            <a href="/delete_follow_request/<%= %>">
+              Unfollow
+            </a>
           <% end %>
+        <% else %>
+        <td>
+        </td>
         <% end %>
       </td>
 

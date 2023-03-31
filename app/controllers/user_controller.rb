@@ -12,6 +12,14 @@ class UserController < ApplicationController
 
     @the_user = matching_users.at(0)
 
+    matching_follow_requests = FollowRequest.all
+
+    @list_of_follow_requests = matching_follow_requests.order({ :created_at => :desc })
+
+    if @current_user == nil
+      redirect_to("/user_sign_in", { :notice => "You have to sign in first." })
+    else
     render({ :template => "users/show.html.erb" })
+    end
   end
 end

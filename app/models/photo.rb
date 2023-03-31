@@ -13,6 +13,8 @@
 #  owner_id       :integer
 #
 class Photo < ApplicationRecord
+  mount_uploader :image, ImageUploader
+
   validates(:owner_id, { :presence => true })
   validates(:image, { :presence => true })
   belongs_to(:owner, { :required => true, :class_name => "User", :foreign_key => "owner_id", :counter_cache => :own_photos_count })
@@ -21,4 +23,6 @@ class Photo < ApplicationRecord
   has_many(:fans, { :through => :likes, :source => :user })
   has_many(:followers, { :through => :owner, :source => :following })
   has_many(:fan_followers, { :through => :fans, :source => :following })
+
+  has_one  :associated_followrequest, { :through => :owner, :source => :sentfollowrequests }
 end

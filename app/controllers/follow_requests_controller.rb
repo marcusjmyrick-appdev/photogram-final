@@ -11,9 +11,18 @@ class FollowRequestsController < ApplicationController
     matching_users = User.where({ :username => the_id })
   
     @the_user = matching_users.at(0)
-  
-    render({ :template => "users/show.html.erb" })
+    
+    matching_follow_requests = FollowRequest.all
+
+    @list_of_follow_requests = matching_follow_requests.order({ :created_at => :desc })
+
+    if @current_user == nil
+      redirect_to("/user_sign_in", { :notice => "You have to sign in first." })
+    else
+      render({ :template => "users/show.html.erb" })
+    end
   end
+  
   
   def index
     matching_follow_requests = FollowRequest.all
@@ -35,13 +44,12 @@ class FollowRequestsController < ApplicationController
 
   def create
     the_follow_request = FollowRequest.new
-    the_follow_request.sender_id = params.fetch("query_sender_id")
     the_follow_request.recipient_id = params.fetch("query_recipient_id")
-    the_follow_request.status = params.fetch("query_status_id")
-    
-    recipient_user = User.find(the_follow_request.recipient_id)
-    
-    if recipient_user.private?
+    the_follow_request.sender_id = @current_user.id
+
+    recipient = User.where({ :id => the_follow_request.recipient_id }).first
+
+    if recipient.private == true
       the_follow_request.status = "pending"
     else
       the_follow_request.status = "accepted"
@@ -49,9 +57,15 @@ class FollowRequestsController < ApplicationController
 
     if the_follow_request.valid?
       the_follow_request.save
-      redirect_back(fallback_location: "/", notice: "Follow request created successfully.")
+
+      if the_follow_request.status == "accepted"
+        redirect_to("/users/" + the_follow_request.recipient.username, { :notice => "Follow request created successfully." })
+      else
+        redirect_to("/users/", { :notice => "Follow request sent successfully." })
+
+      end
     else
-      redirect_back(fallback_location: "/", alert: the_follow_request.errors.full_messages.to_sentence)
+      redirect_to("/users", { :alert => the_follow_request.errors.full_messages.to_sentence })
     end
   end
 

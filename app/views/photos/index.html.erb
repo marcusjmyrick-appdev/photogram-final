@@ -1,28 +1,46 @@
 <div>
   <div>
     <h1>
-      List of all photos
+      List of photos
     </h1>
   </div>
 </div>
 
-<form action="/insert_photo" method="post" enctype="multipart/form-data">
-  <label for="browser_input">Image</label>
-  <input id="browser_input" type="file" name="query_image" placeholder="Enter a URL for the image...">
+<div>
+  <div>
 
-  <label for="browser_caption">Caption</label>
-  <textarea id="browser_caption" name="query_caption" placeholder="Enter a caption for the photo..."></textarea>
+    <% if @current_user != nil %>
 
-  <input type="hidden" name="query_owner_id" value="<%= @current_user.id %>">
+      <form action="/insert_photo" method="post" enctype="multipart/form-data">
 
-  <button>Add photo</button>
-</form>
+        <div>
+          <label for="image">
+            Image
+          </label>
+          <input id="image" type="file" name="image" placeholder="Enter a URL for the image...">
 
+          <label for="caption_box">
+            Caption
+          </label>
 
+          <textarea id="caption_box" name="query_caption" rows="3" placeholder="Enter a caption for the photo..."></textarea>
+
+          <button>
+            Add photo
+          </button>
+        </div>
+      </form>
+
+    <% end %>
+  </div>
+</div>
+
+<hr>
 <div>
   <div>
     <table border="1">
       <tr>
+
         <th>
           Image
         </th>
@@ -38,6 +56,7 @@
         <th>
           Posted
         </th>
+
         <th>
           Likes
         </th>
@@ -45,38 +64,45 @@
         <th>
         </th>
       </tr>
-
       <% @list_of_photos.each do |a_photo| %>
-      <tr>
-        <td>
-          <img src="<%= a_photo.image %>" />
-        </td>
-        <td>
-          <%= a_photo.caption %>
-        </td>
-        <td>
-          <% owner = User.find(a_photo.owner_id) %>
-          <%= owner.username %>
-        </td>
-         <td>
-          <%= time_ago_in_words(a_photo.created_at) %> ago
-        </td>
-        <td>
-          <%= a_photo.likes_count %>
-        </td>
-       
-        <td>
+        <tr>
+<% if a_photo.owner.private == false %>
+          <td>
+            <img src="<%= a_photo.image %>" class="img-responsive">
+          </td>
+
+          <td>
+            <%= a_photo.caption %>
+          </td>
+
+          <td>
+            <%= a_photo.owner.username %>
+          </td>
+
+          <td>
+            <%= time_ago_in_words(a_photo.created_at) %> ago
+          </td>
+          <td>
+            <%= a_photo.likes_count %>
+          </td>
+
           <% if @current_user == nil %>
-          <a href="/user_sign_in">
-            Show details
-          </a>
+
+            <td>
+              <a href="/user_sign_in">
+                Show details
+              </a>
+            </td>
           <% else %>
-            <a href="/photos/<%= a_photo.id %>">
-            Show details
-          </a>
+            <td>
+              <a href="/photos/<%= a_photo.id %>">
+                Show details
+              </a>
+            </td>
+
           <% end %>
-        </td>
-      </tr>
+        </tr>
+      <% end %>
       <% end %>
     </table>
   </div>
